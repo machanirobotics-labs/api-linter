@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: googleapis-site
+    container_name: api-linter-docs
+    ports:
+      - "4000:4000"
+      - "35729:35729"
+    volumes:
+      - .:/code
+      - bundle_cache:/usr/local/bundle
+    environment:
+      - JEKYLL_ENV=development
+    command: >
+      sh -c "
+      echo 'url: \"\"' > _config_dev.yml &&
+      echo 'baseurl: \"\"' >> _config_dev.yml &&
+      bundle exec jekyll serve
+      --destination /site
+      --host 0.0.0.0
+      --livereload
+      --force_polling
+      --config _config.yml,_config_dev.yml
+      "
+    stdin_open: true
+    tty: true
+
+  docs-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: googleapis-site
+    container_name: api-linter-docs-prod
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/code:ro
+      - bundle_cache:/usr/local/bundle
+    environment:
+      - JEKYLL_ENV=production
+    command: >
+      bundle exec jekyll serve
+      --destination /site
+      --host 0.0.0.0
+      --config _config.yml
+    stdin_open: true
+    tty: true
+    profiles:
+      - prod
+
+  docs-incremental:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: googleapis-site
+    container_name: api-linter-docs-incremental
+    ports:
+      - "4000:4000"
+      - "35729:35729"
+    volumes:
+      - .:/code
+      - bundle_cache:/usr/local/bundle
+    environment:
+      - JEKYLL_ENV=development
+    command: >
+      sh -c "
+      echo 'url: \"\"' > _config_dev.yml &&
+      echo 'baseurl: \"\"' >> _config_dev.yml &&
+      bundle exec jekyll serve
+      --destination /site
+      --host 0.0.0.0
+      --livereload
+      --incremental
+      --force_polling
+      --config _config.yml,_config_dev.yml
+      "
+    stdin_open: true
+    tty: true
+    profiles:
+      - incremental
+
+volumes:
+  bundle_cache:

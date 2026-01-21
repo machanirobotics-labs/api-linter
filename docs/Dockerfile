@@ -1,34 +1,36 @@
 FROM ruby:3.4-alpine
 
-# Copy the existing code into the Docker image.
-#
-# This will copy everything *at build time* (not at runtime), so it is
-# still important to use `--mount` to get a reasonable development loop.
-# This makes the image work for both purposes, though.
-COPY . /code/
-WORKDIR /code/
+# Install system dependencies
+RUN apk add --no-cache \
+  build-base \
+  git \
+  && rm -rf /var/cache/apk/*
 
-# Install bundler and gems for this project.
-RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
-  apk add --no-cache alpine-sdk && \
-  gem update --system && \
+# Set working directory
+WORKDIR /code
+
+# Copy Gemfile and Gemfile.lock first for better caching
+COPY Gemfile Gemfile.lock ./
+
+# Install bundler and gems
+RUN gem update --system && \
   gem install bundler && \
-  bundle install && \
-  apk del --no-cache alpine-sdk && \
-  rm ~/.gemrc
+  bundle config set --local deployment 'false' && \
+  bundle install --jobs 4 --retry 3
 
-# Install git. (Jekyll expects it.)
-RUN apk add --no-cache git
+# Copy the rest of the application
+COPY . .
 
-# Set environment variables that GitHub Pages expects.
-ENV PAGES_REPO_NWO googleapis/googleapis.github.io
+# Set environment variables
+ENV JEKYLL_ENV=development \
+  PAGES_REPO_NWO=googleapis/googleapis.github.io
 
-# Expose appropriate ports.
-EXPOSE 4000
-EXPOSE 35729
+# Expose Jekyll server and LiveReload ports
+EXPOSE 4000 35729
 
-# Run Jekyll's dev server.
-# Reminder: Use -p with `docker run` to publish ports.
-ENTRYPOINT ["bundle", "exec", "jekyll", "serve", \
+# Default command - can be overridden
+CMD ["bundle", "exec", "jekyll", "serve", \
   "--destination", "/site", \
-  "--host", "0.0.0.0"]
+  "--host", "0.0.0.0", \
+  "--livereload", \
+  "--force_polling"]
