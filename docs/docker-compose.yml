@@ -16,7 +16,8 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        echo 'url: "http://localhost:4000"' > _config_dev.yml
+        LOCAL_URL="${LOCAL_URL:-http://localhost:4000}"
+        echo "url: \"$LOCAL_URL\"" > _config_dev.yml
         echo 'baseurl: ""' >> _config_dev.yml
         bundle exec jekyll serve --destination /site --host 0.0.0.0 --livereload --force_polling --config _config.yml,_config_dev.yml
     stdin_open: true

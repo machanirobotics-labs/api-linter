@@ -3,3 +3,6 @@ default.profraw
 _site
 .jekyll-metadata
 _config_dev.yml
+
+# Local environment
+.env

@@ -10,6 +10,13 @@ This directory contains Docker configurations for running the Jekyll documentati
 # Development mode (default) - with live reload
 docker-compose up docs
 
+# With custom local domain
+LOCAL_URL=http://gapi.docs.machanirobotics.local:4000 docker-compose up docs
+
+# Or create .env file with LOCAL_URL=http://gapi.docs.machanirobotics.local:4000
+echo "LOCAL_URL=http://gapi.docs.machanirobotics.local:4000" > .env
+docker-compose up docs
+
 # Production mode
 docker-compose --profile prod up docs-prod
 
@@ -22,6 +29,34 @@ docker-compose up --build docs
 # Stop and remove containers
 docker-compose down
 ```
+
+### Setting Up Local DNS
+
+To use a custom domain like `gapi.docs.machanirobotics.local`:
+
+1. **Get your machine's IP:**
+   ```bash
+   ip addr show | grep "inet " | grep -v 127.0.0.1
+   ```
+
+2. **Add to `/etc/hosts` on each device:**
+   ```bash
+   # Linux/Mac: /etc/hosts
+   # Windows: C:\Windows\System32\drivers\etc\hosts
+   192.168.x.x   gapi.docs.machanirobotics.local
+   ```
+
+3. **Create `.env` file:**
+   ```bash
+   echo "LOCAL_URL=http://gapi.docs.machanirobotics.local:4000" > .env
+   ```
+
+4. **Start with custom domain:**
+   ```bash
+   docker-compose up docs
+   ```
+
+5. **Access at:** `http://gapi.docs.machanirobotics.local:4000`
 
 ### Using the Shell Script
 
