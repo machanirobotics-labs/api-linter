@@ -13,7 +13,12 @@ services:
       - bundle_cache:/usr/local/bundle
     environment:
       - JEKYLL_ENV=development
-    command: sh -c "echo 'url:' > _config_dev.yml && echo 'baseurl:' >> _config_dev.yml && bundle exec jekyll serve --destination /site --host 0.0.0.0 --livereload --force_polling --config _config.yml,_config_dev.yml"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo 'url:' > _config_dev.yml
+        echo 'baseurl:' >> _config_dev.yml
+        bundle exec jekyll serve --destination /site --host 0.0.0.0 --livereload --force_polling --config _config.yml,_config_dev.yml
     stdin_open: true
     tty: true
 
@@ -54,7 +59,12 @@ services:
       - bundle_cache:/usr/local/bundle
     environment:
       - JEKYLL_ENV=development
-    command: sh -c "echo 'url:' > _config_dev.yml && echo 'baseurl:' >> _config_dev.yml && bundle exec jekyll serve --destination /site --host 0.0.0.0 --livereload --incremental --force_polling --config _config.yml,_config_dev.yml"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo 'url:' > _config_dev.yml
+        echo 'baseurl:' >> _config_dev.yml
+        bundle exec jekyll serve --destination /site --host 0.0.0.0 --livereload --incremental --force_polling --config _config.yml,_config_dev.yml
     stdin_open: true
     tty: true
     profiles:
