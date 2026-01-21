@@ -4,6 +4,7 @@ FROM ruby:3.4-alpine
 RUN apk add --no-cache \
   build-base \
   git \
+  libstdc++ \
   && rm -rf /var/cache/apk/*
 
 # Set working directory
