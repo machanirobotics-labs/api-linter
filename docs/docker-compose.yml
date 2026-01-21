@@ -16,7 +16,7 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        echo 'url: ""' > _config_dev.yml
+        echo 'url: "http://localhost:4000"' > _config_dev.yml
         echo 'baseurl: ""' >> _config_dev.yml
         bundle exec jekyll serve --destination /site --host 0.0.0.0 --livereload --force_polling --config _config.yml,_config_dev.yml
     stdin_open: true
@@ -62,7 +62,7 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        echo 'url: ""' > _config_dev.yml
+        echo 'url: "http://localhost:4000"' > _config_dev.yml
         echo 'baseurl: ""' >> _config_dev.yml
         bundle exec jekyll serve --destination /site --host 0.0.0.0 --livereload --incremental --force_polling --config _config.yml,_config_dev.yml
     stdin_open: true
